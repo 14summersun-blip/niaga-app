@@ -10,23 +10,14 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #F8FAFC; }
         
-        /* Custom Scrollbar for Banner */
-        .banner-track {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; 
-        }
+        /* Banner Animation */
+        .banner-track { display: flex; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .banner-track::-webkit-scrollbar { display: none; }
-        
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .banner-animate { animation: scroll 20s linear infinite; }
         .banner-animate:hover { animation-play-state: paused; }
 
+        /* Carousel */
         .carousel-container { position: relative; overflow: hidden; }
         .carousel-slide { display: flex; transition: transform 0.5s ease; }
         .carousel-btn {
@@ -43,341 +34,579 @@
 </head>
 <body class="pb-24"> 
 
-    <!-- HEADER BIRU -->
+    <!-- HEADER BIRU (Statis di Atas) -->
     <header class="bg-blue-600 text-white sticky top-0 z-50 shadow-lg">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold">Info Niaga</h1>
+            <!-- Title berubah dinamis -->
+            <h1 id="pageTitle" class="text-xl font-bold cursor-pointer" onclick="showFeed()">Info Niaga</h1>
             <button id="menuBtn" class="text-2xl font-bold focus:outline-none">&#9776;</button>
         </div>
         
         <!-- POPUP MENU -->
         <div id="menuPopup" class="hidden absolute right-0 top-12 w-48 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50">
             <nav class="flex flex-col">
-                <a href="https://kirimwa-admin.vercel.app" class="px-4 py-3 hover:bg-gray-100 border-b font-medium">KirimWA</a>
-                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Kontak</a>
-                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Toko</a>
-                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b font-semibold text-blue-600">Info Niaga</a>
-                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Akun</a>
+                <a href="#" onclick="showFeed()" class="px-4 py-3 hover:bg-gray-100 border-b font-medium">Feed</a>
+                <a href="#" onclick="showMyStore()" class="px-4 py-3 hover:bg-gray-100 border-b">Toko Saya</a>
+                <a href="#" onclick="showPostModal()" class="px-4 py-3 hover:bg-gray-100 border-b text-blue-600 font-semibold">+ Post Iklan</a>
                 <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left font-medium">Logout</button>
             </nav>
         </div>
     </header>
 
-    <!-- FILTER SECTION (3 LEVEL) -->
-    <div class="bg-white shadow-sm py-3 px-4 mb-2 border-b">
-        <div class="mb-2 text-sm font-semibold text-gray-600">Filter Lokasi:</div>
-        <div class="grid grid-cols-3 gap-2 mb-2">
-            <select id="filterProvinsi" onchange="loadKabupaten()" class="border rounded px-2 py-2 text-xs w-full bg-white">
-                <option value="">Semua Provinsi</option>
-            </select>
-            <select id="filterKabupaten" onchange="loadKecamatan()" class="border rounded px-2 py-2 text-xs w-full bg-white" disabled>
-                <option value="">Semua Kabupaten</option>
-            </select>
-            <select id="filterKecamatan" class="border rounded px-2 py-2 text-xs w-full bg-white" disabled>
-                <option value="">Semua Kecamatan</option>
-            </select>
-        </div>
-        <button onclick="applyFilter()" class="w-full bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-600 transition">
-            Terapkan Filter
-        </button>
-    </div>
+    <!-- KONTEN UTAMA (DINAMIS) -->
+    <main id="mainContent">
+        
+        <!-- VIEW 1: HALAMAN FEED (Default) -->
+        <div id="feedView">
+            <!-- Filter Section -->
+            <div class="bg-white shadow-sm py-3 px-4 mb-2 border-b">
+                <div class="mb-2 text-sm font-semibold text-gray-600">Filter Lokasi:</div>
+                <div class="grid grid-cols-3 gap-2 mb-2">
+                    <select id="filterProvinsi" onchange="loadKabupaten()" class="border rounded px-2 py-2 text-xs w-full bg-white">
+                        <option value="">Semua Provinsi</option>
+                    </select>
+                    <select id="filterKabupaten" onchange="loadKecamatan()" class="border rounded px-2 py-2 text-xs w-full bg-white" disabled>
+                        <option value="">Semua Kabupaten</option>
+                    </select>
+                    <select id="filterKecamatan" class="border rounded px-2 py-2 text-xs w-full bg-white" disabled>
+                        <option value="">Semua Kecamatan</option>
+                    </select>
+                </div>
+                <button onclick="applyFilter()" class="w-full bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-600 transition">
+                    Terapkan Filter
+                </button>
+            </div>
 
-    <!-- FEED CONTAINER -->
-    <main id="feedContainer" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-        <div class="col-span-full text-center text-gray-500 py-10">Memuat data...</div>
+            <!-- Feed Container -->
+            <div id="feedContainer" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                <div class="col-span-full text-center text-gray-500 py-10">Memuat data...</div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: HALAMAN AKUN TOKO (Hidden by default) -->
+        <div id="storeView" class="hidden">
+            <div class="bg-white shadow-sm">
+                <!-- Cover & Profile -->
+                <div class="h-32 bg-gradient-to-r from-blue-500 to-blue-700 relative">
+                    <div class="absolute -bottom-10 left-4">
+                        <div class="w-20 h-20 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center text-3xl text-blue-500 font-bold" id="storeAvatar">T</div>
+                    </div>
+                </div>
+                <div class="pt-12 px-4 pb-4">
+                    <h2 id="storeName" class="text-xl font-bold text-gray-800">Nama Toko</h2>
+                    <p id="storeAddress" class="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Alamat Toko</span>
+                    </p>
+                    <div class="mt-3 flex gap-2">
+                        <a id="storeMapLink" href="#" target="_blank" class="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                            Lihat Peta
+                        </a>
+                        <button id="storeWaBtn" class="flex-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            Chat Toko
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="mt-4 px-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Daftar Produk</h3>
+                <div id="productContainer" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Products will load here -->
+                </div>
+            </div>
+        </div>
+
     </main>
+
+    <!-- FLOATING BUTTON (Post Iklan) -->
+    <button onclick="showPostModal()" id="fabPost" class="fixed bottom-20 right-4 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 transition z-40">
+        +
+    </button>
+
+   <!-- MODAL POSTING (Pop Up) -->
+<div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 id="modalTitle" class="font-bold text-lg">Posting Baru</h3>
+            <button onclick="closePostModal()" class="text-gray-500 text-2xl">&times;</button>
+        </div>
+        <div class="p-4 space-y-3">
+            <div>
+                <label class="text-sm font-medium text-gray-700">Judul / Nama</label>
+                <input type="text" id="inputTitle" class="w-full border rounded-lg px-3 py-2 mt-1" placeholder="Judul Iklan / Nama Produk">
+            </div>
+            <!-- INPUT HARGA (Hidden by default for Feed Post) -->
+            <div id="inputPrice" class="hidden">
+                <label class="text-sm font-medium text-gray-700">Harga (Opsional)</label>
+                <input type="text" class="w-full border rounded-lg px-3 py-2 mt-1" placeholder="Contoh: Rp 50.000">
+            </div>
+            <div>
+                <label class="text-sm font-medium text-gray-700">Deskripsi</label>
+                <textarea id="inputDesc" rows="3" class="w-full border rounded-lg px-3 py-2 mt-1" placeholder="Deskripsi singkat..."></textarea>
+            </div>
+            <div>
+                <label class="text-sm font-medium text-gray-700">Upload Gambar (Max 3)</label>
+                <input type="file" id="inputImages" multiple accept="image/*" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
+            </div>
+            <button id="btnSubmit" onclick="submitPost()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
+                Posting Sekarang
+            </button>
+        </div>
+    </div>
+</div>
 
     <!-- FLOATING BANNER FOOTER -->
     <div id="bannerFooter" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40 overflow-hidden hidden">
         <div class="banner-track p-2 gap-4" id="bannerTrack"></div>
     </div>
 
-    <!-- SUPABASE & LOGIC INIT -->
-    <script type="module">
-        const SUPABASE_URL = 'https://whlyxdcsrvrpxmdsfdjz.supabase.co'; // GANTI INI
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndobHl4ZGNzcnZycHhtZHNmZGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODY3OTYsImV4cCI6MjA4ODk2Mjc5Nn0.A4SFdoE72-xNn99ez9Ug5R1fndrcTu4GhYy9Mpe1Zfk'; // GANTI INI
-        
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-        window.supabase = supabase;
+    <!-- LOGIC -->
+   <!-- GANTI BAGIAN SCRIPT DI FILE INDEX.HTML ANDA DENGAN INI -->
 
-        // --- FUNGSI LOAD WILAYAH (API Emsifa) ---
-        async function loadProvinsi() {
-            try {
-                const response = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
-                const data = await response.json();
-                const select = document.getElementById('filterProvinsi');
-                data.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.name; // Kita simpan nama, bukan ID, untuk matching sederhana
-                    opt.textContent = p.name;
-                    select.appendChild(opt);
-                });
-            } catch (e) { console.error("Gagal load provinsi", e); }
+<script type="module">
+    const SUPABASE_URL = 'https://whlyxdcsrvrpxmdsfdjz.supabase.co'; // GANTI
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndobHl4ZGNzcnZycHhtZHNmZGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODY3OTYsImV4cCI6MjA4ODk2Mjc5Nn0.A4SFdoE72-xNn99ez9Ug5R1fndrcTu4GhYy9Mpe1Zfk'; // GANTI
+    
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    window.supabase = supabase;
+
+    let currentUser = null;
+    let currentStoreId = null; // Untuk melacak toko siapa yang sedang dilihat
+
+    // Cek Sesi Login
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) currentUser = session.user;
+    });
+    supabase.auth.onAuthStateChange((event, session) => {
+        currentUser = session ? session.user : null;
+    });
+
+    // --- NAVIGASI HALAMAN ---
+    window.showFeed = function() {
+        document.getElementById('feedView').classList.remove('hidden');
+        document.getElementById('storeView').classList.add('hidden');
+        document.getElementById('fabPost').classList.remove('hidden'); // Munculkan tombol +
+        document.getElementById('pageTitle').innerText = "Info Niaga";
+        document.getElementById('pageTitle').setAttribute('onclick', 'showFeed()');
+        loadFeed();
+    }
+
+    window.showMyStore = async function() {
+        if (!currentUser) return alert("Silakan login terlebih dahulu.");
+        
+        // Cek status aktivasi toko
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+        
+        if (!profile.is_store_active) {
+            return alert("Anda belum aktivasi Akun Toko. Silakan hubungi Admin.");
         }
 
-        window.loadKabupaten = async function() {
-            const provSelect = document.getElementById('filterProvinsi');
-            const kabSelect = document.getElementById('filterKabupaten');
-            const kecSelect = document.getElementById('filterKecamatan');
-            
-            // Reset dropdown bawahnya
-            kabSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
-            kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
-            kecSelect.disabled = true;
-            kabSelect.disabled = true;
+        // Tampilkan View Toko
+        document.getElementById('feedView').classList.add('hidden');
+        document.getElementById('storeView').classList.remove('hidden');
+        document.getElementById('fabPost').classList.add('hidden'); // Sembunyikan tombol + Feed
+        document.getElementById('pageTitle').innerText = profile.store_name || "Toko Saya";
 
-            if (!provSelect.value) return;
+        // Isi Data
+        document.getElementById('storeName').innerText = profile.store_name;
+        document.getElementById('storeAddress').innerText = profile.store_address || "Alamat belum diatur";
+        document.getElementById('storeAvatar').innerText = profile.store_name ? profile.store_name.charAt(0).toUpperCase() : "T";
+        
+        const waBtn = document.getElementById('storeWaBtn');
+        waBtn.onclick = () => window.open(`https://wa.me/${profile.phone}`, '_blank');
 
-            // Ambil ID Provinsi dari API (karena API butuh ID, bukan nama)
-            // Trik: Kita fetch semua provinsi lagi untuk cari ID, atau kita simpan di attribute
-            // Untuk simple nya, kita biarkan user memilih dan kita cari berdasarkan nama nanti.
-            // Tapi untuk dropdown, kita perlu list.
-            // Karena API Emsifa butuh ID, kita perlu mapping.
-            
-            // Solusi Cepat: Kita map manual nama ke ID? Tidak bisa.
-            // Solusi Alternatif: Kita cari ID provinsi dulu.
-            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
-            const provs = await provRes.json();
-            const foundProv = provs.find(p => p.name === provSelect.value);
+        if (profile.gmaps_link) {
+            document.getElementById('storeMapLink').href = profile.gmaps_link;
+            document.getElementById('storeMapLink').classList.remove('hidden');
+        } else {
+            document.getElementById('storeMapLink').classList.add('hidden');
+        }
 
-            if (foundProv) {
-                const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
+        currentStoreId = currentUser.id; // Set ID toko saat ini
+        loadProducts(currentUser.id);
+    };
+
+    // --- FUNGSI PRODUK TOKO ---
+    async function loadProducts(userId) {
+        const container = document.getElementById('productContainer');
+        container.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Memuat produk...</div>';
+
+        const { data: products, error } = await supabase.from('store_products')
+            .select('*')
+            .eq('user_id', userId);
+
+        // Tambah tombol "Tambah Produk" di atas list
+        let htmlContent = `
+            <div class="col-span-2 mb-2">
+                <button onclick="showProductModal()" class="w-full bg-blue-100 text-blue-700 py-2 rounded-lg font-semibold border border-dashed border-blue-300 hover:bg-blue-200">
+                    + Tambah Produk Baru
+                </button>
+            </div>
+        `;
+
+        if (error || products.length === 0) {
+            container.innerHTML = htmlContent + '<div class="col-span-2 text-center text-gray-400 py-6">Belum ada produk.</div>';
+            return;
+        }
+
+        container.innerHTML = htmlContent;
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow overflow-hidden';
+            card.innerHTML = `
+                <img src="${p.image_url || 'https://via.placeholder.com/150'}" class="w-full h-24 object-cover">
+                <div class="p-2">
+                    <h4 class="font-semibold text-sm truncate">${p.product_name}</h4>
+                    <p class="text-green-600 font-bold text-xs">${p.price || ''}</p>
+                    <button onclick="handleProductWa('${p.id}', '${userId}')" class="mt-2 w-full bg-green-500 text-white text-xs py-1 rounded hover:bg-green-600">WhatsApp</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.handleProductWa = async (prodId, userId) => {
+        await supabase.rpc('increment_product_counter', { prod_id: prodId });
+        const { data } = await supabase.from('profiles').select('phone').eq('id', userId).single();
+        if (data) window.open(`https://wa.me/${data.phone}`, '_blank');
+    };
+
+    // --- MODAL PRODUK (BARU) ---
+    window.showProductModal = function() {
+        // Kita gunakan modal yang sama dengan Post, tapi ubah kontennya
+        document.getElementById('modalTitle').innerText = "Tambah Produk Toko";
+        document.getElementById('inputPrice').classList.remove('hidden'); // Tampilkan input harga
+        document.getElementById('btnSubmit').innerText = "Simpan Produk";
+        document.getElementById('btnSubmit').setAttribute('onclick', 'submitProduct()');
+        document.getElementById('postModal').classList.remove('hidden');
+    };
+
+    window.submitProduct = async function() {
+        const name = document.getElementById('inputTitle').value;
+        const price = document.getElementById('inputPrice').value;
+        const file = document.getElementById('inputImages').files[0];
+
+        if (!name) return alert("Nama produk harus diisi!");
+
+        let imageUrl = '';
+        if (file) {
+            const fileName = `prod_${Date.now()}_${file.name}`;
+            const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
+            if (data) imageUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl;
+        }
+
+        const { error } = await supabase.from('store_products').insert({
+            user_id: currentUser.id,
+            product_name: name,
+            price: price,
+            image_url: imageUrl
+        });
+
+        if (error) {
+            alert("Gagal simpan produk: " + error.message);
+        } else {
+            closePostModal();
+            loadProducts(currentUser.id); // Refresh list produk
+        }
+    };
+
+    // --- FUNGSI LOAD WILAYAH & FEED (Sama seperti sebelumnya) ---
+    async function loadProvinsi() {
+        try {
+            const response = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+            const data = await response.json();
+            const select = document.getElementById('filterProvinsi');
+            data.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.name;
+                opt.textContent = p.name;
+                select.appendChild(opt);
+            });
+        } catch (e) { console.error("Gagal load provinsi", e); }
+    }
+    window.loadKabupaten = async function() {
+        const provSelect = document.getElementById('filterProvinsi');
+        const kabSelect = document.getElementById('filterKabupaten');
+        const kecSelect = document.getElementById('filterKecamatan');
+        kabSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
+        kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
+        kecSelect.disabled = true; kabSelect.disabled = true;
+        if (!provSelect.value) return;
+        const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+        const provs = await provRes.json();
+        const foundProv = provs.find(p => p.name === provSelect.value);
+        if (foundProv) {
+            const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
+            const data = await response.json();
+            data.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k.name;
+                opt.textContent = k.name;
+                kabSelect.appendChild(opt);
+            });
+            kabSelect.disabled = false;
+        }
+    }
+    window.loadKecamatan = async function() {
+        const provSelect = document.getElementById('filterProvinsi');
+        const kabSelect = document.getElementById('filterKabupaten');
+        const kecSelect = document.getElementById('filterKecamatan');
+        kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
+        kecSelect.disabled = true;
+        if (!kabSelect.value) return;
+        const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+        const provs = await provRes.json();
+        const foundProv = provs.find(p => p.name === provSelect.value);
+        if (foundProv) {
+            const kabRes = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
+            const kabs = await kabRes.json();
+            const foundKab = kabs.find(k => k.name === kabSelect.value);
+            if (foundKab) {
+                const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${foundKab.id}.json`);
                 const data = await response.json();
-                
                 data.forEach(k => {
                     const opt = document.createElement('option');
                     opt.value = k.name;
                     opt.textContent = k.name;
-                    kabSelect.appendChild(opt);
+                    kecSelect.appendChild(opt);
                 });
-                kabSelect.disabled = false;
+                kecSelect.disabled = false;
             }
         }
+    }
+    window.applyFilter = function() { loadFeed(true); }
+    
+    async function loadFeed(isFiltered = false) {
+        const container = document.getElementById('feedContainer');
+        container.innerHTML = '<div class="col-span-full text-center py-10">Memuat data...</div>';
+        const prov = document.getElementById('filterProvinsi').value;
+        const kab = document.getElementById('filterKabupaten').value;
+        const kec = document.getElementById('filterKecamatan').value;
 
-        window.loadKecamatan = async function() {
-            const provSelect = document.getElementById('filterProvinsi');
-            const kabSelect = document.getElementById('filterKabupaten');
-            const kecSelect = document.getElementById('filterKecamatan');
-            
-            kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
-            kecSelect.disabled = true;
+        let query = supabase.from('feed_posts')
+            .select(`id, title, description, images, created_at, wa_click_count, store_click_count, profiles ( id, username, raw_location, is_store_active, phone )`)
+            .eq('is_active', true)
+            .order('created_at', { ascending: false });
 
-            if (!kabSelect.value) return;
+        const { data: posts, error } = await query;
 
-            // Logika sama, cari ID Kabupaten berdasarkan Nama
-            // Ini sedang "mahal" karena fetch berkali-kali, tapi untuk MVP ini cukup.
-            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
-            const provs = await provRes.json();
-            const foundProv = provs.find(p => p.name === provSelect.value);
-
-            if (foundProv) {
-                const kabRes = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
-                const kabs = await kabRes.json();
-                const foundKab = kabs.find(k => k.name === kabSelect.value);
-
-                if (foundKab) {
-                    const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${foundKab.id}.json`);
-                    const data = await response.json();
-                    
-                    data.forEach(k => {
-                        const opt = document.createElement('option');
-                        opt.value = k.name;
-                        opt.textContent = k.name;
-                        kecSelect.appendChild(opt);
-                    });
-                    kecSelect.disabled = false;
-                }
-            }
+        if (error) {
+            container.innerHTML = `<div class="col-span-full text-center text-red-500">Gagal memuat data.</div>`; return;
         }
 
-        // --- FUNGSI LOAD BANNER ---
-        async function loadBanners() {
-            const { data: settings } = await supabase.from('site_settings').select('*');
-            const bannerSetting = settings?.find(s => s.key === 'banner_enabled');
-            const heightSetting = settings?.find(s => s.key === 'banner_height');
-
-            if (bannerSetting && bannerSetting.value === 'true') {
-                const { data: banners } = await supabase.from('banners').select('*').eq('is_active', true).order('order_index');
-                
-                if (banners && banners.length > 0) {
-                    const footer = document.getElementById('bannerFooter');
-                    const track = document.getElementById('bannerTrack');
-                    
-                    footer.style.height = heightSetting?.value || '60px';
-                    
-                    const content = banners.map(b => `
-                        <img src="${b.image_url}" class="h-full object-contain rounded cursor-pointer" style="min-width: auto; max-width: 200px;" onclick="window.open('${b.target_url || '#'}', '_blank')">
-                    `).join('');
-                    
-                    track.innerHTML = content + content; 
-                    track.classList.add('banner-animate');
-                    footer.classList.remove('hidden');
-                }
-            }
-        }
-
-        // --- FUNGSI LOAD FEED (Dengan Filter Lokasi) ---
-        window.applyFilter = async function() {
-            loadFeed(true);
-        }
-
-        async function loadFeed(isFiltered = false) {
-            const container = document.getElementById('feedContainer');
-            container.innerHTML = '<div class="col-span-full text-center py-10">Memuat data...</div>';
-
-            // Ambil nilai filter
-            const prov = document.getElementById('filterProvinsi').value;
-            const kab = document.getElementById('filterKabupaten').value;
-            const kec = document.getElementById('filterKecamatan').value;
-
-            // Query dasar
-            let query = supabase.from('feed_posts')
-                .select(`
-                    id, title, description, images, created_at, wa_click_count, store_click_count,
-                    profiles ( username, raw_location, is_store_active, phone )
-                `)
-                .eq('is_active', true)
-                .order('created_at', { ascending: false });
-
-            const { data: posts, error } = await query;
-
-            if (error) {
-                console.error(error);
-                container.innerHTML = `<div class="col-span-full text-center text-red-500">Gagal memuat data.</div>`;
-                return;
-            }
-
-            // Filter di Client Side (karena lokasi di DB masih text bebas)
-            // Ini lebih fleksibel daripada strict SQL
-            let filteredPosts = posts;
-            
-            if (isFiltered) {
-                filteredPosts = posts.filter(post => {
-                    if (!post.profiles.raw_location) return false;
-                    const loc = post.profiles.raw_location.toLowerCase();
-                    
-                    // Logika: Jika filter diisi, cek apakah lokasi user mengandung kata tersebut
-                    // Semakin spesifik filter (Kecamatan), semakin akurat.
-                    let match = true;
-                    
-                    if (kec) {
-                        // Jika user pilih Kecamatan, prioritaskan itu
-                        match = loc.includes(kec.toLowerCase());
-                    } else if (kab) {
-                        match = loc.includes(kab.toLowerCase());
-                    } else if (prov) {
-                        match = loc.includes(prov.toLowerCase());
-                    }
-                    
-                    return match;
-                });
-            }
-
-            if (filteredPosts.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10">Tidak ada postingan di lokasi ini.</div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            filteredPosts.forEach(post => {
-                const user = post.profiles;
-                const date = new Date(post.created_at);
-                const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const formattedTime = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-                const isStore = user.is_store_active;
-                
-                let desc = post.description || '';
-                if (!isStore) {
-                    desc = desc.replace(/(https?:\/\/[^\s]+)/g, '[link tersembunyi]'); 
-                } else {
-                    desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>');
-                }
-
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col';
-                
-                card.innerHTML = `
-                    <div class="p-4 border-b border-gray-100">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-semibold text-gray-800">${user.username || 'Anonim'}</h3>
-                                <p class="text-xs text-gray-500">${user.raw_location || 'Lokasi tidak diset'}</p>
-                            </div>
-                            <p class="text-xs text-gray-400 italic">${formattedDate} ${formattedTime}</p>
-                        </div>
-                    </div>
-
-                    ${post.images && post.images.length > 0 ? `
-                    <div class="carousel-container bg-gray-50">
-                        <div class="carousel-slide" id="slide-${post.id}">
-                            ${post.images.map(img => `<img src="${img}" class="w-full h-48 object-cover flex-shrink-0">`).join('')}
-                        </div>
-                        ${post.images.length > 1 ? `
-                        <div class="carousel-btn prev" onclick="moveSlide('${post.id}', -1)">&#10094;</div>
-                        <div class="carousel-btn next" onclick="moveSlide('${post.id}', 1)">&#10095;</div>
-                        ` : ''}
-                    </div>
-                    ` : ''}
-
-                    <div class="p-4 flex-1">
-                        <h4 class="font-semibold text-gray-900 mb-1 line-clamp-2">${post.title}</h4>
-                        <p class="text-sm text-gray-600 line-clamp-2">${desc}</p>
-                    </div>
-
-                    <div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
-                        <div class="text-xs text-gray-400">
-                            WA: ${post.wa_click_count}x | Toko: ${post.store_click_count}x
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="handleWaClick('${post.id}', '${user.phone}', '${post.title}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-600 transition">
-                                WhatsApp
-                            </button>
-                            ${isStore ? `
-                            <button onclick="handleStoreClick('${post.id}', '${user.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-600 transition">
-                                Lihat Toko
-                            </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
+        let filteredPosts = posts;
+        if (isFiltered) {
+            filteredPosts = posts.filter(post => {
+                if (!post.profiles.raw_location) return false;
+                const loc = post.profiles.raw_location.toLowerCase();
+                let match = true;
+                if (kec) match = loc.includes(kec.toLowerCase());
+                else if (kab) match = loc.includes(kab.toLowerCase());
+                else if (prov) match = loc.includes(prov.toLowerCase());
+                return match;
             });
         }
 
-        // --- EVENT HANDLERS ---
-        window.handleWaClick = async (postId, phone, title) => {
-            await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'wa' });
-            const msg = encodeURIComponent(`Halo, saya tertarik dengan: ${title}`);
-            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-        };
+        if (filteredPosts.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10">Tidak ada postingan.</div>`; return;
+        }
 
-        window.handleStoreClick = async (postId, userId) => {
-            await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'store' });
-            alert(`Fitur Lihat Toko (User ID: ${userId}) akan segera aktif!`);
-        };
+        container.innerHTML = '';
+        filteredPosts.forEach(post => {
+            const user = post.profiles;
+            const date = new Date(post.created_at);
+            const isStore = user.is_store_active;
+            let desc = post.description || '';
+            if (!isStore) desc = desc.replace(/(https?:\/\/[^\s]+)/g, '[link tersembunyi]'); 
+            else desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>');
 
-        window.moveSlide = (id, direction) => {
-            const slide = document.getElementById(`slide-${id}`);
-            const width = slide.offsetWidth;
-            const currentTransform = slide.style.transform ? parseInt(slide.style.transform.replace('translateX(', '').replace('px)', '')) : 0;
-            let newTransform = currentTransform + (direction * -width);
-            const maxTransform = -(slide.children.length - 1) * width;
-            if (newTransform > 0) newTransform = maxTransform;
-            if (newTransform < maxTransform) newTransform = 0;
-            slide.style.transform = `translateX(${newTransform}px)`;
-        };
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col';
+            card.innerHTML = `
+                <div class="p-4 border-b border-gray-100">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-gray-800">${user.username || 'Anonim'}</h3>
+                            <p class="text-xs text-gray-500">${user.raw_location || '-'}</p>
+                        </div>
+                        <p class="text-xs text-gray-400 italic">${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</p>
+                    </div>
+                </div>
+                ${post.images && post.images.length > 0 ? `
+                <div class="carousel-container bg-gray-50">
+                    <div class="carousel-slide" id="slide-${post.id}">
+                        ${post.images.map(img => `<img src="${img}" class="w-full h-48 object-cover flex-shrink-0">`).join('')}
+                    </div>
+                    ${post.images.length > 1 ? `<div class="carousel-btn prev" onclick="moveSlide('${post.id}', -1)">&#10094;</div><div class="carousel-btn next" onclick="moveSlide('${post.id}', 1)">&#10095;</div>` : ''}
+                </div>` : ''}
+                <div class="p-4 flex-1">
+                    <h4 class="font-semibold text-gray-900 mb-1 line-clamp-2">${post.title}</h4>
+                    <p class="text-sm text-gray-600 line-clamp-2">${desc}</p>
+                </div>
+                <div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
+                    <div class="text-xs text-gray-400">WA: ${post.wa_click_count}x | Toko: ${post.store_click_count}x</div>
+                    <div class="flex gap-2">
+                        <button onclick="handleWaClick('${post.id}', '${user.phone}', '${post.title}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-600">WhatsApp</button>
+                        ${isStore ? `<button onclick="viewOtherStore('${user.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-600">Lihat Toko</button>` : ''}
+                    </div>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
 
-        document.getElementById('menuBtn').addEventListener('click', () => {
-            document.getElementById('menuPopup').classList.toggle('hidden');
+    // Lihat Toko Orang Lain
+    window.viewOtherStore = async function(userId) {
+        // Logic sederhana: paksa load data user lain ke view toko
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).single();
+        if (!profile) return alert("Toko tidak ditemukan");
+
+        document.getElementById('feedView').classList.add('hidden');
+        document.getElementById('storeView').classList.remove('hidden');
+        document.getElementById('fabPost').classList.add('hidden');
+        document.getElementById('pageTitle').innerText = profile.store_name || "Toko";
+
+        document.getElementById('storeName').innerText = profile.store_name;
+        document.getElementById('storeAddress').innerText = profile.store_address;
+        document.getElementById('storeAvatar').innerText = profile.store_name ? profile.store_name.charAt(0).toUpperCase() : "T";
+        document.getElementById('storeWaBtn').onclick = () => window.open(`https://wa.me/${profile.phone}`, '_blank');
+        
+        if (profile.gmaps_link) {
+            document.getElementById('storeMapLink').href = profile.gmaps_link;
+            document.getElementById('storeMapLink').classList.remove('hidden');
+        } else {
+            document.getElementById('storeMapLink').classList.add('hidden');
+        }
+
+        // Sembunyikan tombol tambah produk karena ini bukan toko kita
+        // Caranya: kita modifikasi sedikit loadProducts atau hide manual
+        currentStoreId = userId;
+        loadProductsOther(userId);
+    };
+
+    async function loadProductsOther(userId) {
+        const container = document.getElementById('productContainer');
+        container.innerHTML = '';
+        const { data: products } = await supabase.from('store_products').select('*').eq('user_id', userId);
+        if (!products || products.length === 0) {
+            container.innerHTML = '<div class="col-span-2 text-center text-gray-400 py-6">Toko ini belum punya produk.</div>';
+            return;
+        }
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow overflow-hidden';
+            card.innerHTML = `
+                <img src="${p.image_url || 'https://via.placeholder.com/150'}" class="w-full h-24 object-cover">
+                <div class="p-2">
+                    <h4 class="font-semibold text-sm truncate">${p.product_name}</h4>
+                    <p class="text-green-600 font-bold text-xs">${p.price || ''}</p>
+                    <button onclick="handleProductWa('${p.id}', '${userId}')" class="mt-2 w-full bg-green-500 text-white text-xs py-1 rounded hover:bg-green-600">WhatsApp</button>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
+
+    // --- FUNGSI POSTING FEED ---
+    window.showPostModal = function() {
+        if(!currentUser) return alert("Silakan login/register via kirimWA dulu.");
+        
+        // Reset form untuk Feed
+        document.getElementById('modalTitle').innerText = "Posting Info Niaga";
+        document.getElementById('inputPrice').classList.add('hidden'); // Sembunyikan harga
+        document.getElementById('btnSubmit').innerText = "Posting";
+        document.getElementById('btnSubmit').setAttribute('onclick', 'submitPost()');
+        document.getElementById('postModal').classList.remove('hidden');
+    };
+    
+    window.closePostModal = function() { 
+        document.getElementById('postModal').classList.add('hidden');
+        // Reset Input
+        document.getElementById('inputTitle').value = '';
+        document.getElementById('inputDesc').value = '';
+        document.getElementById('inputPrice').value = '';
+        document.getElementById('inputImages').value = '';
+    };
+
+    window.moveSlide = (id, dir) => {
+        const slide = document.getElementById(`slide-${id}`);
+        const width = slide.offsetWidth;
+        const currentTransform = slide.style.transform ? parseInt(slide.style.transform.replace('translateX(', '').replace('px)', '')) : 0;
+        let newTransform = currentTransform + (dir * -width);
+        const maxTransform = -(slide.children.length - 1) * width;
+        if (newTransform > 0) newTransform = maxTransform;
+        if (newTransform < maxTransform) newTransform = 0;
+        slide.style.transform = `translateX(${newTransform}px)`;
+    };
+
+    window.handleWaClick = async (postId, phone, title) => {
+        await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'wa' });
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent('Halo, saya tertarik dengan: ' + title)}`, '_blank');
+    };
+
+    async function loadBanners() {
+        const { data: settings } = await supabase.from('site_settings').select('*');
+        const bannerSetting = settings?.find(s => s.key === 'banner_enabled');
+        if (bannerSetting?.value === 'true') {
+            const { data: banners } = await supabase.from('banners').select('*').eq('is_active', true).order('order_index');
+            if (banners?.length > 0) {
+                const footer = document.getElementById('bannerFooter');
+                const track = document.getElementById('bannerTrack');
+                footer.classList.remove('hidden');
+                track.innerHTML = banners.map(b => `<img src="${b.image_url}" class="h-14 object-contain rounded cursor-pointer" onclick="window.open('${b.target_url}')">`).join('');
+                track.innerHTML += track.innerHTML; 
+                track.classList.add('banner-animate');
+            }
+        }
+    }
+
+    window.submitPost = async function() {
+        const title = document.getElementById('inputTitle').value;
+        const desc = document.getElementById('inputDesc').value;
+        const files = document.getElementById('inputImages').files;
+
+        if (!title) return alert("Judul harus diisi!");
+
+        let imageUrls = [];
+        if (files.length > 0) {
+            for (let i = 0; i < Math.min(files.length, 3); i++) {
+                const file = files[i];
+                const fileName = `${Date.now()}_${file.name}`;
+                const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
+                if (data) {
+                    const publicUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl;
+                    imageUrls.push(publicUrl);
+                }
+            }
+        }
+
+        const { error } = await supabase.from('feed_posts').insert({
+            user_id: currentUser.id,
+            title: title,
+            description: desc,
+            images: imageUrls
         });
 
-        // Initialize
-        loadProvinsi();
-        loadFeed();
-        loadBanners();
+        if (error) {
+            alert("Gagal posting: " + error.message);
+        } else {
+            alert("Berhasil posting!");
+            closePostModal();
+            loadFeed();
+        }
+    };
 
-    </script>
+    // Init
+    loadProvinsi();
+    loadFeed();
+    loadBanners();
+
+    document.getElementById('menuBtn').addEventListener('click', () => {
+        document.getElementById('menuPopup').classList.toggle('hidden');
+    });
+</script>
 </body>
 </html>
