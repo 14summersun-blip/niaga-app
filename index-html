@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Niaga - Ekosistem kirimWA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F8FAFC; }
+        
+        /* Custom Scrollbar for Banner */
+        .banner-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        .banner-track::-webkit-scrollbar { display: none; /* Chrome */ }
+        
+        /* Animation for Banner */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .banner-animate {
+            animation: scroll 20s linear infinite;
+        }
+        .banner-animate:hover {
+            animation-play-state: paused;
+        }
+
+        /* Carousel Simple Controls */
+        .carousel-container { position: relative; overflow: hidden; }
+        .carousel-slide { display: flex; transition: transform 0.5s ease; }
+        .carousel-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.8); border-radius: 50%;
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 12px; font-weight: bold; color: #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .carousel-btn:hover { background: #fff; }
+        .carousel-btn.prev { left: 5px; }
+        .carousel-btn.next { right: 5px; }
+    </style>
+</head>
+<body class="pb-24"> <!-- Padding bottom agar tidak tertutup banner -->
+
+    <!-- HEADER BIRU -->
+    <header class="bg-blue-600 text-white sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Info Niaga</h1>
+            <button id="menuBtn" class="text-2xl font-bold focus:outline-none">&#9776;</button>
+        </div>
+        
+        <!-- POPUP MENU -->
+        <div id="menuPopup" class="hidden absolute right-0 top-12 w-48 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50">
+            <nav class="flex flex-col">
+                <a href="https://kirimwa-admin.vercel.app" class="px-4 py-3 hover:bg-gray-100 border-b font-medium">KirimWA</a>
+                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Kontak</a>
+                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Toko</a>
+                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b font-semibold text-blue-600">Info Niaga</a>
+                <a href="#" class="px-4 py-3 hover:bg-gray-100 border-b">Akun</a>
+                <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left font-medium">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- FILTER SECTION -->
+    <div class="bg-white shadow-sm py-3 px-4 mb-2">
+        <div class="flex flex-wrap gap-2 items-center">
+            <select id="filterProvinsi" class="border rounded px-3 py-2 text-sm w-full md:w-auto flex-1">
+                <option value="">Semua Provinsi</option>
+                <!-- Nantinya diisi dinamis atau statis dulu -->
+            </select>
+            <select id="filterKabupaten" class="border rounded px-3 py-2 text-sm w-full md:w-auto flex-1">
+                <option value="">Semua Kabupaten</option>
+            </select>
+            <button onclick="applyFilter()" class="bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium w-full md:w-auto">Filter</button>
+        </div>
+    </div>
+
+    <!-- FEED CONTAINER -->
+    <main id="feedContainer" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <!-- Card Feed akan muncul disini -->
+        <div class="col-span-full text-center text-gray-500 py-10">
+            Memuat data...
+        </div>
+    </main>
+
+    <!-- FLOATING BANNER FOOTER -->
+    <div id="bannerFooter" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40 overflow-hidden hidden">
+        <div class="banner-track p-2 gap-4" id="bannerTrack">
+            <!-- Banner Images here -->
+        </div>
+    </div>
+
+    <!-- SUPABASE INIT -->
+    <script type="module">
+        // GANTI DENGAN KREDENSIAL SUPABASE LAMA ANDA
+        const SUPABASE_URL = 'URL_SUPABASE_ANDA';
+        const SUPABASE_KEY = 'KEY_SUPABASE_ANDA'; // Gunakan anon key
+        
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        window.supabase = supabase; // Expose to global scope
+
+        // Check Auth State
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (!session) {
+                // Opsional: Redirect ke login kirimWA jika perlu, atau biarkan lihat feed
+                console.log("User not logged in");
+            }
+        });
+
+        // --- FUNGSI LOAD BANNER ---
+        async function loadBanners() {
+            const { data: settings } = await supabase.from('site_settings').select('*');
+            const bannerSetting = settings?.find(s => s.key === 'banner_enabled');
+            const heightSetting = settings?.find(s => s.key === 'banner_height');
+
+            if (bannerSetting && bannerSetting.value === 'true') {
+                const { data: banners } = await supabase.from('banners').select('*').eq('is_active', true).order('order_index');
+                
+                if (banners && banners.length > 0) {
+                    const footer = document.getElementById('bannerFooter');
+                    const track = document.getElementById('bannerTrack');
+                    
+                    footer.style.height = heightSetting?.value || '60px';
+                    
+                    // Duplicate content for infinite scroll illusion
+                    const content = banners.map(b => `
+                        <img src="${b.image_url}" class="h-full object-contain rounded cursor-pointer" style="min-width: auto; max-width: 200px;" onclick="window.open('${b.target_url || '#'}', '_blank')">
+                    `).join('');
+                    
+                    track.innerHTML = content + content; // Duplicate
+                    track.classList.add('banner-animate');
+                    footer.classList.remove('hidden');
+                }
+            }
+        }
+
+        // --- FUNGSI LOAD FEED ---
+        async function loadFeed(filterLocation = null) {
+            const container = document.getElementById('feedContainer');
+            container.innerHTML = '<div class="col-span-full text-center py-10">Memuat data...</div>';
+
+            // Query dengan join sederhana: Ambil feed + data user pemilik
+            let query = supabase.from('feed_posts')
+                .select(`
+                    id, title, description, images, created_at, wa_click_count, store_click_count,
+                    profiles ( username, raw_location, is_store_active, phone )
+                `)
+                .eq('is_active', true)
+                .order('created_at', { ascending: false });
+
+            // Filter logika (sederhana, cocokkan text lokasi)
+            // Jika nanti data lokasi sudah terstruktur, kita pakai relasi
+            if(filterLocation) {
+                // Ini query dasar, filter lokasi sebenarnya lebih baik dilakukan di client 
+                // atau pakai filter like di postgrest
+            }
+
+            const { data: posts, error } = await query;
+
+            if (error) {
+                console.error(error);
+                container.innerHTML = `<div class="col-span-full text-center text-red-500">Gagal memuat data.</div>`;
+                return;
+            }
+
+            if (posts.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10">Belum ada postingan.</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            posts.forEach(post => {
+                const user = post.profiles;
+                const date = new Date(post.created_at);
+                const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const formattedTime = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                // Cek apakah user adalah penjual toko
+                const isStore = user.is_store_active;
+                
+                // Proses Deskripsi (Limit 2 baris, handle link)
+                let desc = post.description || '';
+                // Jika bukan toko, jadikan link sebagai teks biasa
+                if (!isStore) {
+                    desc = desc.replace(/(https?:\/\/[^\s]+)/g, '[link tersembunyi]'); 
+                } else {
+                    // Jika toko, buat link clickable
+                    desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>');
+                }
+
+                // Card HTML
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col';
+                
+                card.innerHTML = `
+                    <!-- Header Card -->
+                    <div class="p-4 border-b border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${user.username || 'Anonim'}</h3>
+                                <p class="text-xs text-gray-500">${user.raw_location || 'Lokasi tidak diset'}</p>
+                            </div>
+                            <p class="text-xs text-gray-400 italic">${formattedDate} ${formattedTime}</p>
+                        </div>
+                    </div>
+
+                    <!-- Images Carousel -->
+                    ${post.images && post.images.length > 0 ? `
+                    <div class="carousel-container bg-gray-50">
+                        <div class="carousel-slide" id="slide-${post.id}">
+                            ${post.images.map(img => `<img src="${img}" class="w-full h-48 object-cover flex-shrink-0">`).join('')}
+                        </div>
+                        ${post.images.length > 1 ? `
+                        <div class="carousel-btn prev" onclick="moveSlide('${post.id}', -1)">&#10094;</div>
+                        <div class="carousel-btn next" onclick="moveSlide('${post.id}', 1)">&#10095;</div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+
+                    <!-- Content -->
+                    <div class="p-4 flex-1">
+                        <h4 class="font-semibold text-gray-900 mb-1 line-clamp-2">${post.title}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-2">${desc}</p>
+                    </div>
+
+                    <!-- Footer & Actions -->
+                    <div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
+                        <div class="text-xs text-gray-400">
+                            WA: ${post.wa_click_count}x | Toko: ${post.store_click_count}x
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="handleWaClick('${post.id}', '${user.phone}', '${post.title}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-600 transition">
+                                WhatsApp
+                            </button>
+                            ${isStore ? `
+                            <button onclick="handleStoreClick('${post.id}', '${user.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-600 transition">
+                                Lihat Toko
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- EVENT HANDLERS ---
+        window.handleWaClick = async (postId, phone, title) => {
+            // 1. Update Counter
+            await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'wa' });
+            
+            // 2. Open WA
+            const msg = encodeURIComponent(`Halo, saya tertarik dengan: ${title}`);
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+            
+            // 3. Refresh UI (Optional, simple refresh)
+            // Agar hemat resource, kita tidak reload semua feed, tapi update lokal di UI saja jika perlu
+        };
+
+        window.handleStoreClick = async (postId, userId) => {
+            // 1. Update Counter
+            await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'store' });
+            
+            // 2. Redirect to Store Page (Next Step)
+            alert(`Fitur Lihat Toko (User ID: ${userId}) akan segera aktif!`);
+        };
+
+        // Simple Carousel Logic
+        window.moveSlide = (id, direction) => {
+            const slide = document.getElementById(`slide-${id}`);
+            const width = slide.offsetWidth;
+            const currentTransform = slide.style.transform ? parseInt(slide.style.transform.replace('translateX(', '').replace('px)', '')) : 0;
+            let newTransform = currentTransform + (direction * -width);
+            
+            // Boundary check (sederhana)
+            const maxTransform = -(slide.children.length - 1) * width;
+            if (newTransform > 0) newTransform = maxTransform;
+            if (newTransform < maxTransform) newTransform = 0;
+            
+            slide.style.transform = `translateX(${newTransform}px)`;
+        };
+
+        // Menu Toggle
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('menuPopup').classList.toggle('hidden');
+        });
+
+        // Initialize
+        loadFeed();
+        loadBanners();
+
+    </script>
+</body>
+</html>
