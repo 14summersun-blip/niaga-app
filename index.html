@@ -9,15 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #F8FAFC; }
-        
-        /* Banner Animation */
         .banner-track { display: flex; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .banner-track::-webkit-scrollbar { display: none; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .banner-animate { animation: scroll 20s linear infinite; }
         .banner-animate:hover { animation-play-state: paused; }
-
-        /* Carousel */
         .carousel-container { position: relative; overflow: hidden; }
         .carousel-slide { display: flex; transition: transform 0.5s ease; }
         .carousel-btn {
@@ -41,57 +37,55 @@
             <button id="menuBtn" class="text-2xl font-bold focus:outline-none">&#9776;</button>
         </div>
         
-        <!-- POPUP MENU (UPDATE HTML) -->
-<div id="menuPopup" class="hidden absolute right-0 top-12 w-56 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50 border">
-    
-    <!-- Info User -->
-    <div class="px-4 py-3 border-b bg-gray-50">
-        <p class="text-xs text-gray-500">Terlogin sebagai:</p>
-        <p id="menuUserEmail" class="font-semibold text-sm text-blue-600 truncate">Memuat...</p>
-    </div>
+        <!-- POPUP MENU -->
+        <div id="menuPopup" class="hidden absolute right-0 top-12 w-56 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50 border">
+            
+            <div class="px-4 py-3 border-b bg-gray-50">
+                <p class="text-xs text-gray-500">Terlogin sebagai:</p>
+                <p id="menuUserEmail" class="font-semibold text-sm text-blue-600 truncate">Memuat...</p>
+            </div>
 
-    <nav class="flex flex-col">
-        <!-- 1. Kontak -->
-        <a id="linkKontak" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-            <span>📒</span> Kontak
-        </a>
+            <nav class="flex flex-col">
+                <!-- 1. Kontak -->
+                <a id="linkKontak" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+                    <span>📒</span> Kontak
+                </a>
 
-        <!-- 2. Info Niaga -->
-        <a href="#" onclick="showFeed(); closeMenu()" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-            <span>ℹ️</span> Info Niaga
-        </a>
+                <!-- 2. Info Niaga -->
+                <a href="#" onclick="showFeed(); closeMenu()" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+                    <span>ℹ️</span> Info Niaga
+                </a>
 
-        <!-- 3. Tombol Dinamis Kirim WA -->
-        <a id="menuKirimLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-            <span>💬</span> <span id="menuKirimText">Aktivasi Kirim WA</span>
-        </a>
+                <!-- 3. Tombol Dinamis Kirim WA -->
+                <a id="menuKirimLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+                    <span>💬</span> <span id="menuKirimText">Aktivasi Kirim WA</span>
+                </a>
 
-        <!-- 4. Tombol Dinamis Toko -->
-        <a id="menuTokoLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-            <span>🏪</span> <span id="menuTokoText">Aktivasi Toko</span>
-        </a>
+                <!-- 4. Tombol Dinamis Toko -->
+                <a id="menuTokoLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+                    <span>🏪</span> <span id="menuTokoText">Aktivasi Toko</span>
+                </a>
 
-        <div class="border-t my-1"></div>
+                <div class="border-t my-1"></div>
 
-        <!-- 5. Akun -->
-        <a id="linkAkun" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-            <span>⚙️</span> Akun
-        </a>
+                <!-- 5. Akun -->
+                <a id="linkAkun" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+                    <span>⚙️</span> Akun
+                </a>
 
-        <!-- 6. Logout -->
-        <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left text-sm flex items-center gap-2">
-            <span>🚪</span> Logout
-        </button>
-    </nav>
-</div>
+                <!-- 6. Logout -->
+                <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left text-sm flex items-center gap-2">
+                    <span>🚪</span> Logout
+                </button>
+            </nav>
+        </div>
     </header>
 
-    <!-- KONTEN UTAMA (DINAMIS) -->
+    <!-- KONTEN UTAMA -->
     <main id="mainContent">
         
-        <!-- VIEW 1: HALAMAN FEED (Default) -->
+        <!-- VIEW 1: HALAMAN FEED -->
         <div id="feedView">
-            <!-- Filter Section -->
             <div class="bg-white shadow-sm py-3 px-4 mb-2 border-b">
                 <div class="mb-2 text-sm font-semibold text-gray-600">Filter Lokasi:</div>
                 <div class="grid grid-cols-3 gap-2 mb-2">
@@ -109,14 +103,12 @@
                     Terapkan Filter
                 </button>
             </div>
-
-            <!-- Feed Container -->
             <div id="feedContainer" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                 <div class="col-span-full text-center text-gray-500 py-10">Memuat data...</div>
             </div>
         </div>
 
-        <!-- VIEW 2: HALAMAN AKUN TOKO (Hidden by default) -->
+        <!-- VIEW 2: HALAMAN AKUN TOKO -->
         <div id="storeView" class="hidden">
             <div class="bg-white shadow-sm">
                 <div class="h-32 bg-gradient-to-r from-blue-500 to-blue-700 relative">
@@ -142,24 +134,17 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Products Section -->
             <div class="mt-4 px-4">
                 <h3 class="text-lg font-bold text-gray-800 mb-3">Daftar Produk</h3>
-                <div id="productContainer" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <!-- Products will load here -->
-                </div>
+                <div id="productContainer" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
             </div>
         </div>
-
     </main>
 
-    <!-- FLOATING BUTTON (Post Iklan) -->
-    <button onclick="showPostModal()" id="fabPost" class="fixed bottom-20 right-4 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 transition z-40">
-        +
-    </button>
+    <!-- FLOATING BUTTON -->
+    <button onclick="showPostModal()" id="fabPost" class="fixed bottom-20 right-4 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 transition z-40">+</button>
 
-    <!-- MODAL POSTING (Pop Up) -->
+    <!-- MODAL POSTING -->
     <div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div class="p-4 border-b flex justify-between items-center">
@@ -171,7 +156,6 @@
                     <label class="text-sm font-medium text-gray-700">Judul / Nama</label>
                     <input type="text" id="inputTitle" class="w-full border rounded-lg px-3 py-2 mt-1" placeholder="Judul Iklan / Nama Produk">
                 </div>
-                <!-- INPUT HARGA (Hidden by default for Feed Post) -->
                 <div id="inputPrice" class="hidden">
                     <label class="text-sm font-medium text-gray-700">Harga (Opsional)</label>
                     <input type="text" class="w-full border rounded-lg px-3 py-2 mt-1" placeholder="Contoh: Rp 50.000">
@@ -184,30 +168,25 @@
                     <label class="text-sm font-medium text-gray-700">Upload Gambar (Max 3)</label>
                     <input type="file" id="inputImages" multiple accept="image/*" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
                 </div>
-                <button id="btnSubmit" onclick="submitPost()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
-                    Posting Sekarang
-                </button>
+                <button id="btnSubmit" onclick="submitPost()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">Posting Sekarang</button>
             </div>
         </div>
     </div>
 
-    <!-- FLOATING BANNER FOOTER -->
+    <!-- BANNER -->
     <div id="bannerFooter" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40 overflow-hidden hidden">
         <div class="banner-track p-2 gap-4" id="bannerTrack"></div>
     </div>
 
-    <!-- LOGIC -->
-    <!-- GANTI BAGIAN SCRIPT PALING BAWAH DENGAN INI -->
-
-<script type="module">
+    <!-- SCRIPT -->
+    <script type="module">
         // ==========================================
-        // KONFIGURASI PUSAT
-        // GANTI URL INI DENGAN ALAMAT WEB KIRIMWA ANDA YANG ASLI
+        // KONFIGURASI WAJIB (SUDAH DIPERBAIKI)
         // ==========================================
-        const URL_UTAMA = 'https://kirimwa-admin.vercel.app'; 
+        const URL_UTAMA = 'https://14summersun-blip.github.io/kirimWA-v1.1';
         
-        const SUPABASE_URL = 'https://whlyxdcsrvrpxmdsfdjz.supabase.co'; // PASTIKAN INI SUDAH BENAR
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndobHl4ZGNzcnZycHhtZHNmZGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODY3OTYsImV4cCI6MjA4ODk2Mjc5Nn0.A4SFdoE72-xNn99ez9Ug5R1fndrcTu4GhYy9Mpe1Zfk'; // PASTIKAN INI SUDAH BENAR
+        const SUPABASE_URL = 'https://whlyxdcsrvrpxmdsfdjz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndobHl4ZGNzcnZycHhtZHNmZGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODY3OTYsImV4cCI6MjA4ODk2Mjc5Nn0.A4SFdoE72-xNn99ez9Ug5R1fndrcTu4GhYy9Mpe1Zfk';
         
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -215,7 +194,11 @@
 
         let currentUser = null;
 
-        // Cek Sesi Login
+        // SETUP LINK STATIS (MENGGUNAKAN FORMAT HASH #)
+        // Karena kirimWA Anda pakai #, maka formatnya: URL_UTAMA/#halaman
+        document.getElementById('linkKontak').href = `${URL_UTAMA}/#contacts`;
+        document.getElementById('linkAkun').href = `${URL_UTAMA}/#account`;
+
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (session) currentUser = session.user;
             loadMenuStatus(); 
@@ -225,7 +208,6 @@
             loadMenuStatus();
         });
 
-        // --- FUNGSI MENU DINAMIS ---
         async function loadMenuStatus() {
             const emailEl = document.getElementById('menuUserEmail');
             const kirimLink = document.getElementById('menuKirimLink');
@@ -233,22 +215,14 @@
             const tokoLink = document.getElementById('menuTokoLink');
             const tokoText = document.getElementById('menuTokoText');
 
-            // SETTING LINK STANDAR DI MENU
-            document.getElementById('linkKontak').href = `${URL_UTAMA}/contacts`;
-            document.getElementById('linkAkun').href = `${URL_UTAMA}/account`;
-
             if (currentUser) {
                 emailEl.innerText = currentUser.email;
-
-                const { data: profile } = await supabase.from('profiles')
-                    .select('is_active, is_store_active')
-                    .eq('id', currentUser.id)
-                    .single();
+                const { data: profile } = await supabase.from('profiles').select('is_active, is_store_active').eq('id', currentUser.id).single();
 
                 // Logika Kirim WA
                 if (profile && profile.is_active) {
                     kirimText.innerText = "Kirim WA";
-                    kirimLink.href = URL_UTAMA; // Arahkan ke Home kirimWA
+                    kirimLink.href = `${URL_UTAMA}/#`; // Link ke Home kirimWA
                     kirimLink.onclick = null;
                 } else {
                     kirimText.innerText = "Aktivasi Kirim WA";
@@ -268,8 +242,6 @@
                 }
             } else {
                 emailEl.innerText = "Belum Login";
-                kirimText.innerText = "Login Dulu";
-                tokoText.innerText = "Login Dulu";
             }
         }
 
@@ -283,9 +255,7 @@
             window.open(`https://wa.me/6285161990373?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        window.closeMenu = function() {
-            document.getElementById('menuPopup').classList.add('hidden');
-        }
+        window.closeMenu = function() { document.getElementById('menuPopup').classList.add('hidden'); }
 
         window.logout = async function() {
             await supabase.auth.signOut();
@@ -293,85 +263,47 @@
             window.location.reload(); 
         }
 
-        // --- NAVIGASI HALAMAN ---
         window.showFeed = function() {
             document.getElementById('feedView').classList.remove('hidden');
             document.getElementById('storeView').classList.add('hidden');
             document.getElementById('fabPost').classList.remove('hidden');
             document.getElementById('pageTitle').innerText = "Info Niaga";
-            document.getElementById('pageTitle').setAttribute('onclick', 'showFeed()');
             loadFeed();
         }
 
         window.showMyStore = async function() {
             if (!currentUser) return alert("Silakan login terlebih dahulu.");
-            
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+            if (!profile.is_store_active) return alert("Anda belum aktivasi Akun Toko.");
             
-            if (!profile.is_store_active) {
-                return alert("Anda belum aktivasi Akun Toko. Silakan hubungi Admin.");
-            }
-
             document.getElementById('feedView').classList.add('hidden');
             document.getElementById('storeView').classList.remove('hidden');
             document.getElementById('fabPost').classList.add('hidden');
             document.getElementById('pageTitle').innerText = profile.store_name || "Toko Saya";
-
             document.getElementById('storeName').innerText = profile.store_name;
-            document.getElementById('storeAddress').innerText = profile.store_address || "Alamat belum diatur";
+            document.getElementById('storeAddress').innerText = profile.store_address || "-";
             document.getElementById('storeAvatar').innerText = profile.store_name ? profile.store_name.charAt(0).toUpperCase() : "T";
+            document.getElementById('storeWaBtn').onclick = () => window.open(`https://wa.me/${profile.phone}`, '_blank');
             
-            const waBtn = document.getElementById('storeWaBtn');
-            waBtn.onclick = () => window.open(`https://wa.me/${profile.phone}`, '_blank');
-
             if (profile.gmaps_link) {
                 document.getElementById('storeMapLink').href = profile.gmaps_link;
                 document.getElementById('storeMapLink').classList.remove('hidden');
-            } else {
-                document.getElementById('storeMapLink').classList.add('hidden');
-            }
-
+            } else { document.getElementById('storeMapLink').classList.add('hidden'); }
+            
             loadProducts(currentUser.id, true);
         };
 
-        // --- FUNGSI LOAD PRODUK TOKO ---
         async function loadProducts(userId, isOwner = false) {
             const container = document.getElementById('productContainer');
-            container.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Memuat produk...</div>';
-
-            const { data: products, error } = await supabase.from('store_products')
-                .select('*')
-                .eq('user_id', userId);
-
-            let htmlContent = '';
-            
-            if (isOwner) {
-                htmlContent = `
-                    <div class="col-span-2 mb-2">
-                        <button onclick="showProductModal()" class="w-full bg-blue-100 text-blue-700 py-2 rounded-lg font-semibold border border-dashed border-blue-300 hover:bg-blue-200">
-                            + Tambah Produk Baru
-                        </button>
-                    </div>
-                `;
-            }
-
-            if (error || products.length === 0) {
-                container.innerHTML = htmlContent + '<div class="col-span-2 text-center text-gray-400 py-6">Belum ada produk.</div>';
-                return;
-            }
-
+            container.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Memuat...</div>';
+            const { data: products, error } = await supabase.from('store_products').select('*').eq('user_id', userId);
+            let htmlContent = isOwner ? `<div class="col-span-2 mb-2"><button onclick="showProductModal()" class="w-full bg-blue-100 text-blue-700 py-2 rounded-lg font-semibold border border-dashed border-blue-300 hover:bg-blue-200">+ Tambah Produk</button></div>` : '';
+            if (error || products.length === 0) { container.innerHTML = htmlContent + '<div class="col-span-2 text-center text-gray-400 py-6">Belum ada produk.</div>'; return; }
             container.innerHTML = htmlContent;
             products.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-lg shadow overflow-hidden';
-                card.innerHTML = `
-                    <img src="${p.image_url || 'https://via.placeholder.com/150'}" class="w-full h-24 object-cover">
-                    <div class="p-2">
-                        <h4 class="font-semibold text-sm truncate">${p.product_name}</h4>
-                        <p class="text-green-600 font-bold text-xs">${p.price || ''}</p>
-                        <button onclick="handleProductWa('${p.id}', '${userId}')" class="mt-2 w-full bg-green-500 text-white text-xs py-1 rounded hover:bg-green-600">WhatsApp</button>
-                    </div>
-                `;
+                card.innerHTML = `<img src="${p.image_url || 'https://via.placeholder.com/150'}" class="w-full h-24 object-cover"><div class="p-2"><h4 class="font-semibold text-sm truncate">${p.product_name}</h4><p class="text-green-600 font-bold text-xs">${p.price || ''}</p><button onclick="handleProductWa('${p.id}', '${userId}')" class="mt-2 w-full bg-green-500 text-white text-xs py-1 rounded hover:bg-green-600">WhatsApp</button></div>`;
                 container.appendChild(card);
             });
         }
@@ -382,66 +314,35 @@
             if (data) window.open(`https://wa.me/${data.phone}`, '_blank');
         };
 
-        // --- FUNGSI LOAD WILAYAH & FEED ---
         async function loadProvinsi() {
             try {
                 const response = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
                 const data = await response.json();
                 const select = document.getElementById('filterProvinsi');
-                data.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.name;
-                    opt.textContent = p.name;
-                    select.appendChild(opt);
-                });
+                data.forEach(p => { const opt = document.createElement('option'); opt.value = p.name; opt.textContent = p.name; select.appendChild(opt); });
             } catch (e) { console.error("Gagal load provinsi", e); }
         }
         window.loadKabupaten = async function() {
-            const provSelect = document.getElementById('filterProvinsi');
-            const kabSelect = document.getElementById('filterKabupaten');
-            const kecSelect = document.getElementById('filterKecamatan');
-            kabSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
-            kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
-            kecSelect.disabled = true; kabSelect.disabled = true;
+            const provSelect = document.getElementById('filterProvinsi'); const kabSelect = document.getElementById('filterKabupaten'); const kecSelect = document.getElementById('filterKecamatan');
+            kabSelect.innerHTML = '<option value="">Semua Kabupaten</option>'; kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>'; kecSelect.disabled = true; kabSelect.disabled = true;
             if (!provSelect.value) return;
-            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
-            const provs = await provRes.json();
-            const foundProv = provs.find(p => p.name === provSelect.value);
+            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json'); const provs = await provRes.json(); const foundProv = provs.find(p => p.name === provSelect.value);
             if (foundProv) {
-                const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
-                const data = await response.json();
-                data.forEach(k => {
-                    const opt = document.createElement('option');
-                    opt.value = k.name;
-                    opt.textContent = k.name;
-                    kabSelect.appendChild(opt);
-                });
+                const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`); const data = await response.json();
+                data.forEach(k => { const opt = document.createElement('option'); opt.value = k.name; opt.textContent = k.name; kabSelect.appendChild(opt); });
                 kabSelect.disabled = false;
             }
         }
         window.loadKecamatan = async function() {
-            const provSelect = document.getElementById('filterProvinsi');
-            const kabSelect = document.getElementById('filterKabupaten');
-            const kecSelect = document.getElementById('filterKecamatan');
-            kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
-            kecSelect.disabled = true;
+            const provSelect = document.getElementById('filterProvinsi'); const kabSelect = document.getElementById('filterKabupaten'); const kecSelect = document.getElementById('filterKecamatan');
+            kecSelect.innerHTML = '<option value="">Semua Kecamatan</option>'; kecSelect.disabled = true;
             if (!kabSelect.value) return;
-            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
-            const provs = await provRes.json();
-            const foundProv = provs.find(p => p.name === provSelect.value);
+            const provRes = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json'); const provs = await provRes.json(); const foundProv = provs.find(p => p.name === provSelect.value);
             if (foundProv) {
-                const kabRes = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`);
-                const kabs = await kabRes.json();
-                const foundKab = kabs.find(k => k.name === kabSelect.value);
+                const kabRes = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${foundProv.id}.json`); const kabs = await kabRes.json(); const foundKab = kabs.find(k => k.name === kabSelect.value);
                 if (foundKab) {
-                    const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${foundKab.id}.json`);
-                    const data = await response.json();
-                    data.forEach(k => {
-                        const opt = document.createElement('option');
-                        opt.value = k.name;
-                        opt.textContent = k.name;
-                        kecSelect.appendChild(opt);
-                    });
+                    const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${foundKab.id}.json`); const data = await response.json();
+                    data.forEach(k => { const opt = document.createElement('option'); opt.value = k.name; opt.textContent = k.name; kecSelect.appendChild(opt); });
                     kecSelect.disabled = false;
                 }
             }
@@ -451,77 +352,20 @@
         async function loadFeed(isFiltered = false) {
             const container = document.getElementById('feedContainer');
             container.innerHTML = '<div class="col-span-full text-center py-10">Memuat data...</div>';
-            const prov = document.getElementById('filterProvinsi').value;
-            const kab = document.getElementById('filterKabupaten').value;
-            const kec = document.getElementById('filterKecamatan').value;
-
-            let query = supabase.from('feed_posts')
-                .select(`id, title, description, images, created_at, wa_click_count, store_click_count, profiles ( id, username, raw_location, is_store_active, phone )`)
-                .eq('is_active', true)
-                .order('created_at', { ascending: false });
-
-            const { data: posts, error } = await query;
-
-            if (error) {
-                container.innerHTML = `<div class="col-span-full text-center text-red-500">Gagal memuat data.</div>`; return;
-            }
-
+            const prov = document.getElementById('filterProvinsi').value; const kab = document.getElementById('filterKabupaten').value; const kec = document.getElementById('filterKecamatan').value;
+            const { data: posts, error } = await supabase.from('feed_posts').select(`id, title, description, images, created_at, wa_click_count, store_click_count, profiles ( id, username, raw_location, is_store_active, phone )`).eq('is_active', true).order('created_at', { ascending: false });
+            if (error) { container.innerHTML = `<div class="col-span-full text-center text-red-500">Gagal memuat data.</div>`; return; }
             let filteredPosts = posts;
-            if (isFiltered) {
-                filteredPosts = posts.filter(post => {
-                    if (!post.profiles.raw_location) return false;
-                    const loc = post.profiles.raw_location.toLowerCase();
-                    let match = true;
-                    if (kec) match = loc.includes(kec.toLowerCase());
-                    else if (kab) match = loc.includes(kab.toLowerCase());
-                    else if (prov) match = loc.includes(prov.toLowerCase());
-                    return match;
-                });
-            }
-
-            if (filteredPosts.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10">Tidak ada postingan.</div>`; return;
-            }
-
+            if (isFiltered) { filteredPosts = posts.filter(post => { if (!post.profiles.raw_location) return false; const loc = post.profiles.raw_location.toLowerCase(); let match = true; if (kec) match = loc.includes(kec.toLowerCase()); else if (kab) match = loc.includes(kab.toLowerCase()); else if (prov) match = loc.includes(prov.toLowerCase()); return match; }); }
+            if (filteredPosts.length === 0) { container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10">Tidak ada postingan.</div>`; return; }
             container.innerHTML = '';
             filteredPosts.forEach(post => {
-                const user = post.profiles;
-                const date = new Date(post.created_at);
-                const isStore = user.is_store_active;
+                const user = post.profiles; const date = new Date(post.created_at); const isStore = user.is_store_active;
                 let desc = post.description || '';
-                if (!isStore) desc = desc.replace(/(https?:\/\/[^\s]+)/g, '[link tersembunyi]'); 
-                else desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>');
-
+                if (!isStore) desc = desc.replace(/(https?:\/\/[^\s]+)/g, '[link tersembunyi]'); else desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 underline">$1</a>');
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col';
-                card.innerHTML = `
-                    <div class="p-4 border-b border-gray-100">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-semibold text-gray-800">${user.username || 'Anonim'}</h3>
-                                <p class="text-xs text-gray-500">${user.raw_location || '-'}</p>
-                            </div>
-                            <p class="text-xs text-gray-400 italic">${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</p>
-                        </div>
-                    </div>
-                    ${post.images && post.images.length > 0 ? `
-                    <div class="carousel-container bg-gray-50">
-                        <div class="carousel-slide" id="slide-${post.id}">
-                            ${post.images.map(img => `<img src="${img}" class="w-full h-48 object-cover flex-shrink-0">`).join('')}
-                        </div>
-                        ${post.images.length > 1 ? `<div class="carousel-btn prev" onclick="moveSlide('${post.id}', -1)">&#10094;</div><div class="carousel-btn next" onclick="moveSlide('${post.id}', 1)">&#10095;</div>` : ''}
-                    </div>` : ''}
-                    <div class="p-4 flex-1">
-                        <h4 class="font-semibold text-gray-900 mb-1 line-clamp-2">${post.title}</h4>
-                        <p class="text-sm text-gray-600 line-clamp-2">${desc}</p>
-                    </div>
-                    <div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
-                        <div class="text-xs text-gray-400">WA: ${post.wa_click_count}x | Toko: ${post.store_click_count}x</div>
-                        <div class="flex gap-2">
-                            <button onclick="handleWaClick('${post.id}', '${user.phone}', '${post.title}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-600">WhatsApp</button>
-                            ${isStore ? `<button onclick="viewOtherStore('${user.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-600">Lihat Toko</button>` : ''}
-                        </div>
-                    </div>`;
+                card.innerHTML = `<div class="p-4 border-b border-gray-100"><div class="flex justify-between items-start"><div><h3 class="font-semibold text-gray-800">${user.username || 'Anonim'}</h3><p class="text-xs text-gray-500">${user.raw_location || '-'}</p></div><p class="text-xs text-gray-400 italic">${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</p></div></div>${post.images && post.images.length > 0 ? `<div class="carousel-container bg-gray-50"><div class="carousel-slide" id="slide-${post.id}">${post.images.map(img => `<img src="${img}" class="w-full h-48 object-cover flex-shrink-0">`).join('')}</div>${post.images.length > 1 ? `<div class="carousel-btn prev" onclick="moveSlide('${post.id}', -1)">&#10094;</div><div class="carousel-btn next" onclick="moveSlide('${post.id}', 1)">&#10095;</div>` : ''}</div>` : ''}<div class="p-4 flex-1"><h4 class="font-semibold text-gray-900 mb-1 line-clamp-2">${post.title}</h4><p class="text-sm text-gray-600 line-clamp-2">${desc}</p></div><div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center"><div class="text-xs text-gray-400">WA: ${post.wa_click_count}x | Toko: ${post.store_click_count}x</div><div class="flex gap-2"><button onclick="handleWaClick('${post.id}', '${user.phone}', '${post.title}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-600">WhatsApp</button>${isStore ? `<button onclick="viewOtherStore('${user.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-600">Lihat Toko</button>` : ''}</div></div>`;
                 container.appendChild(card);
             });
         }
@@ -529,159 +373,30 @@
         window.viewOtherStore = async function(userId) {
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).single();
             if (!profile) return alert("Toko tidak ditemukan");
-
-            document.getElementById('feedView').classList.add('hidden');
-            document.getElementById('storeView').classList.remove('hidden');
-            document.getElementById('fabPost').classList.add('hidden');
-            document.getElementById('pageTitle').innerText = profile.store_name || "Toko";
-
-            document.getElementById('storeName').innerText = profile.store_name;
-            document.getElementById('storeAddress').innerText = profile.store_address;
-            document.getElementById('storeAvatar').innerText = profile.store_name ? profile.store_name.charAt(0).toUpperCase() : "T";
+            document.getElementById('feedView').classList.add('hidden'); document.getElementById('storeView').classList.remove('hidden'); document.getElementById('fabPost').classList.add('hidden'); document.getElementById('pageTitle').innerText = profile.store_name || "Toko";
+            document.getElementById('storeName').innerText = profile.store_name; document.getElementById('storeAddress').innerText = profile.store_address; document.getElementById('storeAvatar').innerText = profile.store_name ? profile.store_name.charAt(0).toUpperCase() : "T";
             document.getElementById('storeWaBtn').onclick = () => window.open(`https://wa.me/${profile.phone}`, '_blank');
-            
-            if (profile.gmaps_link) {
-                document.getElementById('storeMapLink').href = profile.gmaps_link;
-                document.getElementById('storeMapLink').classList.remove('hidden');
-            } else {
-                document.getElementById('storeMapLink').classList.add('hidden');
-            }
-
+            if (profile.gmaps_link) { document.getElementById('storeMapLink').href = profile.gmaps_link; document.getElementById('storeMapLink').classList.remove('hidden'); } else { document.getElementById('storeMapLink').classList.add('hidden'); }
             loadProducts(userId, false);
         };
 
-        // --- MODAL PRODUK & POSTING ---
-        window.showProductModal = function() {
-            document.getElementById('modalTitle').innerText = "Tambah Produk Toko";
-            document.getElementById('inputPrice').classList.remove('hidden');
-            document.getElementById('btnSubmit').innerText = "Simpan Produk";
-            document.getElementById('btnSubmit').setAttribute('onclick', 'submitProduct()');
-            document.getElementById('postModal').classList.remove('hidden');
-        };
+        window.showProductModal = function() { document.getElementById('modalTitle').innerText = "Tambah Produk Toko"; document.getElementById('inputPrice').classList.remove('hidden'); document.getElementById('btnSubmit').innerText = "Simpan Produk"; document.getElementById('btnSubmit').setAttribute('onclick', 'submitProduct()'); document.getElementById('postModal').classList.remove('hidden'); };
+        window.showPostModal = function() { if(!currentUser) return alert("Silakan login/register via kirimWA dulu."); document.getElementById('modalTitle').innerText = "Posting Info Niaga"; document.getElementById('inputPrice').classList.add('hidden'); document.getElementById('btnSubmit').innerText = "Posting"; document.getElementById('btnSubmit').setAttribute('onclick', 'submitPost()'); document.getElementById('postModal').classList.remove('hidden'); };
+        window.closePostModal = function() { document.getElementById('postModal').classList.add('hidden'); document.getElementById('inputTitle').value = ''; document.getElementById('inputDesc').value = ''; document.getElementById('inputPrice').value = ''; document.getElementById('inputImages').value = ''; };
 
-        window.showPostModal = function() {
-            if(!currentUser) return alert("Silakan login/register via kirimWA dulu.");
-            document.getElementById('modalTitle').innerText = "Posting Info Niaga";
-            document.getElementById('inputPrice').classList.add('hidden');
-            document.getElementById('btnSubmit').innerText = "Posting";
-            document.getElementById('btnSubmit').setAttribute('onclick', 'submitPost()');
-            document.getElementById('postModal').classList.remove('hidden');
-        };
-        
-        window.closePostModal = function() { 
-            document.getElementById('postModal').classList.add('hidden');
-            document.getElementById('inputTitle').value = '';
-            document.getElementById('inputDesc').value = '';
-            document.getElementById('inputPrice').value = '';
-            document.getElementById('inputImages').value = '';
-        };
+        window.moveSlide = (id, dir) => { const slide = document.getElementById(`slide-${id}`); const width = slide.offsetWidth; const currentTransform = slide.style.transform ? parseInt(slide.style.transform.replace('translateX(', '').replace('px)', '')) : 0; let newTransform = currentTransform + (dir * -width); const maxTransform = -(slide.children.length - 1) * width; if (newTransform > 0) newTransform = maxTransform; if (newTransform < maxTransform) newTransform = 0; slide.style.transform = `translateX(${newTransform}px)`; };
 
-        window.moveSlide = (id, dir) => {
-            const slide = document.getElementById(`slide-${id}`);
-            const width = slide.offsetWidth;
-            const currentTransform = slide.style.transform ? parseInt(slide.style.transform.replace('translateX(', '').replace('px)', '')) : 0;
-            let newTransform = currentTransform + (dir * -width);
-            const maxTransform = -(slide.children.length - 1) * width;
-            if (newTransform > 0) newTransform = maxTransform;
-            if (newTransform < maxTransform) newTransform = 0;
-            slide.style.transform = `translateX(${newTransform}px)`;
-        };
+        window.handleWaClick = async (postId, phone, title) => { await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'wa' }); window.open(`https://wa.me/${phone}?text=${encodeURIComponent('Halo, saya tertarik dengan: ' + title)}`, '_blank'); };
 
-        window.handleWaClick = async (postId, phone, title) => {
-            await supabase.rpc('increment_feed_counter', { post_id: postId, column_name: 'wa' });
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent('Halo, saya tertarik dengan: ' + title)}`, '_blank');
-        };
+        async function loadBanners() { const { data: settings } = await supabase.from('site_settings').select('*'); const bannerSetting = settings?.find(s => s.key === 'banner_enabled'); if (bannerSetting?.value === 'true') { const { data: banners } = await supabase.from('banners').select('*').eq('is_active', true).order('order_index'); if (banners?.length > 0) { const footer = document.getElementById('bannerFooter'); const track = document.getElementById('bannerTrack'); footer.classList.remove('hidden'); track.innerHTML = banners.map(b => `<img src="${b.image_url}" class="h-14 object-contain rounded cursor-pointer" onclick="window.open('${b.target_url}')">`).join(''); track.innerHTML += track.innerHTML; track.classList.add('banner-animate'); } } }
 
-        async function loadBanners() {
-            const { data: settings } = await supabase.from('site_settings').select('*');
-            const bannerSetting = settings?.find(s => s.key === 'banner_enabled');
-            if (bannerSetting?.value === 'true') {
-                const { data: banners } = await supabase.from('banners').select('*').eq('is_active', true).order('order_index');
-                if (banners?.length > 0) {
-                    const footer = document.getElementById('bannerFooter');
-                    const track = document.getElementById('bannerTrack');
-                    footer.classList.remove('hidden');
-                    track.innerHTML = banners.map(b => `<img src="${b.image_url}" class="h-14 object-contain rounded cursor-pointer" onclick="window.open('${b.target_url}')">`).join('');
-                    track.innerHTML += track.innerHTML; 
-                    track.classList.add('banner-animate');
-                }
-            }
-        }
+        window.submitProduct = async function() { const name = document.getElementById('inputTitle').value; const price = document.getElementById('inputPrice').value; const file = document.getElementById('inputImages').files[0]; if (!name) return alert("Nama produk harus diisi!"); let imageUrl = ''; if (file) { const fileName = `prod_${Date.now()}_${file.name}`; const { data, error } = await supabase.storage.from('product-images').upload(fileName, file); if (data) imageUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl; } const { error } = await supabase.from('store_products').insert({ user_id: currentUser.id, product_name: name, price: price, image_url: imageUrl }); if (error) { alert("Gagal simpan produk: " + error.message); } else { closePostModal(); loadProducts(currentUser.id, true); } };
 
-        window.submitProduct = async function() {
-            const name = document.getElementById('inputTitle').value;
-            const price = document.getElementById('inputPrice').value;
-            const file = document.getElementById('inputImages').files[0];
+        window.submitPost = async function() { const title = document.getElementById('inputTitle').value; const desc = document.getElementById('inputDesc').value; const files = document.getElementById('inputImages').files; if (!title) return alert("Judul harus diisi!"); let imageUrls = []; if (files.length > 0) { for (let i = 0; i < Math.min(files.length, 3); i++) { const file = files[i]; const fileName = `${Date.now()}_${file.name}`; const { data, error } = await supabase.storage.from('product-images').upload(fileName, file); if (data) { const publicUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl; imageUrls.push(publicUrl); } } } const { error } = await supabase.from('feed_posts').insert({ user_id: currentUser.id, title: title, description: desc, images: imageUrls }); if (error) { alert("Gagal posting: " + error.message); } else { closePostModal(); loadFeed(); } };
 
-            if (!name) return alert("Nama produk harus diisi!");
+        document.getElementById('menuBtn').addEventListener('click', () => { document.getElementById('menuPopup').classList.toggle('hidden'); });
 
-            let imageUrl = '';
-            if (file) {
-                const fileName = `prod_${Date.now()}_${file.name}`;
-                const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
-                if (data) imageUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl;
-            }
-
-            const { error } = await supabase.from('store_products').insert({
-                user_id: currentUser.id,
-                product_name: name,
-                price: price,
-                image_url: imageUrl
-            });
-
-            if (error) {
-                alert("Gagal simpan produk: " + error.message);
-            } else {
-                closePostModal();
-                loadProducts(currentUser.id, true); 
-            }
-        };
-
-        window.submitPost = async function() {
-            const title = document.getElementById('inputTitle').value;
-            const desc = document.getElementById('inputDesc').value;
-            const files = document.getElementById('inputImages').files;
-
-            if (!title) return alert("Judul harus diisi!");
-
-            let imageUrls = [];
-            if (files.length > 0) {
-                for (let i = 0; i < Math.min(files.length, 3); i++) {
-                    const file = files[i];
-                    const fileName = `${Date.now()}_${file.name}`;
-                    const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
-                    if (data) {
-                        const publicUrl = supabase.storage.from('product-images').getPublicUrl(data.path).data.publicUrl;
-                        imageUrls.push(publicUrl);
-                    }
-                }
-            }
-
-            const { error } = await supabase.from('feed_posts').insert({
-                user_id: currentUser.id,
-                title: title,
-                description: desc,
-                images: imageUrls
-            });
-
-            if (error) {
-                alert("Gagal posting: " + error.message);
-            } else {
-                closePostModal();
-                loadFeed();
-            }
-        };
-
-        // Init
-        document.getElementById('menuBtn').addEventListener('click', () => {
-            document.getElementById('menuPopup').classList.toggle('hidden');
-        });
-
-        loadProvinsi();
-        loadFeed();
-        loadBanners();
-        loadMenuStatus();
-
+        loadProvinsi(); loadFeed(); loadBanners(); loadMenuStatus();
     </script>
 </body>
 </html>
