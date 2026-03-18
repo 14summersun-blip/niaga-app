@@ -41,49 +41,49 @@
             <button id="menuBtn" class="text-2xl font-bold focus:outline-none">&#9776;</button>
         </div>
         
-        <!-- POPUP MENU (FINAL) -->
-        <div id="menuPopup" class="hidden absolute right-0 top-12 w-56 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50 border">
-            
-            <!-- Info User -->
-            <div class="px-4 py-3 border-b bg-gray-50">
-                <p class="text-xs text-gray-500">Terlogin sebagai:</p>
-                <p id="menuUserEmail" class="font-semibold text-sm text-blue-600 truncate">Memuat...</p>
-            </div>
+        <!-- POPUP MENU (UPDATE HTML) -->
+<div id="menuPopup" class="hidden absolute right-0 top-12 w-56 bg-white text-gray-800 rounded-bl-lg shadow-xl z-50 border">
+    
+    <!-- Info User -->
+    <div class="px-4 py-3 border-b bg-gray-50">
+        <p class="text-xs text-gray-500">Terlogin sebagai:</p>
+        <p id="menuUserEmail" class="font-semibold text-sm text-blue-600 truncate">Memuat...</p>
+    </div>
 
-            <nav class="flex flex-col">
-                <!-- 1. Kontak -->
-                <a href="https://kirimwa-admin.vercel.app/contacts" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-                    <span>📒</span> Kontak
-                </a>
+    <nav class="flex flex-col">
+        <!-- 1. Kontak -->
+        <a id="linkKontak" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+            <span>📒</span> Kontak
+        </a>
 
-                <!-- 2. Info Niaga -->
-                <a href="#" onclick="showFeed(); closeMenu()" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-                    <span>ℹ️</span> Info Niaga
-                </a>
+        <!-- 2. Info Niaga -->
+        <a href="#" onclick="showFeed(); closeMenu()" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+            <span>ℹ️</span> Info Niaga
+        </a>
 
-                <!-- 3. Tombol Dinamis Kirim WA -->
-                <a id="menuKirimLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-                    <span>💬</span> <span id="menuKirimText">Aktivasi Kirim WA</span>
-                </a>
+        <!-- 3. Tombol Dinamis Kirim WA -->
+        <a id="menuKirimLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+            <span>💬</span> <span id="menuKirimText">Aktivasi Kirim WA</span>
+        </a>
 
-                <!-- 4. Tombol Dinamis Toko -->
-                <a id="menuTokoLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-                    <span>🏪</span> <span id="menuTokoText">Aktivasi Toko</span>
-                </a>
+        <!-- 4. Tombol Dinamis Toko -->
+        <a id="menuTokoLink" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+            <span>🏪</span> <span id="menuTokoText">Aktivasi Toko</span>
+        </a>
 
-                <div class="border-t my-1"></div>
+        <div class="border-t my-1"></div>
 
-                <!-- 5. Akun -->
-                <a href="https://kirimwa-admin.vercel.app/account" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
-                    <span>⚙️</span> Akun
-                </a>
+        <!-- 5. Akun -->
+        <a id="linkAkun" href="#" class="px-4 py-3 hover:bg-gray-100 border-b flex items-center gap-2 text-sm">
+            <span>⚙️</span> Akun
+        </a>
 
-                <!-- 6. Logout -->
-                <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left text-sm flex items-center gap-2">
-                    <span>🚪</span> Logout
-                </button>
-            </nav>
-        </div>
+        <!-- 6. Logout -->
+        <button onclick="logout()" class="px-4 py-3 hover:bg-red-50 text-red-600 text-left text-sm flex items-center gap-2">
+            <span>🚪</span> Logout
+        </button>
+    </nav>
+</div>
     </header>
 
     <!-- KONTEN UTAMA (DINAMIS) -->
